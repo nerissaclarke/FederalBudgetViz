@@ -1,10 +1,28 @@
-# FederalBudget
+# FederalBudget Visualization
 
-Source: 
+Source: CBO, Federal Budget by Accounts (March 2016): 2016
+
+
+Vision: Force Directed graph for 2016 Federal Budget
+
+1. Mandatory/Discretionary/Net Interest: Circles
+2. On click: Major Spending categories (with Hover)
+3. On click: add links and nodes with Budget Accounts
+4. Filter: 
+5. Explanation of each major category (in another spreadsheet)
+
+
+
+
+
+
+
+
+
 
 2 Potential Visualizations
 
-1) Source: CBO, Federal Budget by Accounts (March 2016): 2016
+1) CBO, Federal Budget by Accounts (March 2016): 2016
 
 i) Vision: 
 * One large circle: indicating the entire budget for 2016: Heading Label with “Federal Spending in 2016: $Total”
@@ -48,6 +66,6 @@ Elements:
 
 5) ability to zoom into discretionary, mandatory, or types of revenues
 
-Lets try this out with 2015 data first.
+Lets try this out with 2016 data first.
 
 Sources of data: OMB, CBO, TPC

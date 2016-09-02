@@ -1,32 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
-@import 'https://fonts.googleapis.com/css?family=BenchNine:300|Cabin+Condensed:400,700|Catamaran:100|Crimson+Text|Francois+One|Heebo:500|Nobile|Noto+Sans|Oswald:300,400,700|Oxygen:300|PT+Sans+Caption|PT+Serif|Pontano+Sans|Poppins:300|Raleway:400,700';
-  {
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    box-sizing: border-box;
-    text-rendering: optimizeLegibility;
-  }
-
-/*
-font-family: 'BenchNine', sans-serif;
-font-family: 'Cabin Condensed', sans-serif;
-font-family: 'Crimson Text', serif;
-font-family: 'Francois One', sans-serif;
-font-family: 'Nobile', sans-serif;
-font-family: 'Oswald', sans-serif;
-font-family: 'PT Sans Caption', sans-serif;
-font-family: 'PT Serif', serif;
-font-family: 'Pontano Sans', sans-serif;
-font-family: 'Raleway', sans-serif;
-font-family: 'Noto Sans', sans-serif;
-font-family: 'Oxygen', sans-serif;
-font-family: 'Poppins', sans-serif;
-font-family: 'Catamaran', sans-serif;
-font-family: 'Heebo', sans-serif;
-*/
 .nodes circle {
   fill: #ccc;
   stroke: #000;
@@ -43,11 +17,11 @@ text {
 
 </style>
 
-<svg width="960" height="600"></svg>
+<svg width="1500" height="2500"></svg>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
-//This data visualization will create circles for each of the CBO budget accounts. The size of the circles will represent the O2016 (outlays). The color of the circles will represent DiscMand (budget enforcement category). The attraction groups will be major spending categories.
+//This data visualization will create circles for each of the CBO major spending categories. The size of the circles will represent the O2016 (outlays). The color of the circles will represent DiscMand (budget enforcement category). on click, the circles will transform into smaller circles. The attraction groups will be major spending categories.
 
 //This chart uses d3 4.0 for node charts
 var svg = d3.select("svg"),
@@ -73,59 +47,31 @@ var colorDiscMand = d3.scaleOrdinal()
 //Add data here
 d3.csv("CBOBudgetDataByAccountSimplified.csv", function(error, data) {
 
-
   console.log(data);
 
-//This creates empty objects that can be used to create pairs later on
-  var accountLookup = {}
-  var majorSpendingLookup = {}
-  var agencyLookup = {}
-  var functionLookup = {}
-  var budgetEnforcementLookup = {}
-
- data.forEach(function(d) {
-    //Ensure that the data does not have any spaces in it
-    //d.MajorSpendingCategory = d.MajorSpendingCategory.replace(" ","").replace(". ", "")
-    //d.Agency = d.Agency.replace(" ","").replace(" ", "")
-    //d.Bureau = d.Bureau.replace(" ","").replace(" ", "")
-    //d.DiscMand = d.DiscMand.replace(" ","")
-
-    //Create data to go inside the empty Lookup Objects. Creates pairs for $ spent on each account
-    accountLookup[d.Title] = +d.O2016;
-    //Other pairs, may be necessary
-    functionLookup[d.Title] = +d.Func;
-    majorSpendingLookup[d.Title] = d.MajorSpendingCategory;
-    agencyLookup[d.Title] = d.Agency;
-    budgetEnforcementLookup[d.Title]= d.DiscMand;})
-
 //Look at it
-console.log(accountLookup);
+//console.log(accountLookup);
 console.log(majorSpendingLookup);
 
-//network graph data acts like a nested data structure.Create new variables within the nested data. Use d3.set because it is like an ordinal scale. DO WE NEED TO DO THIS IF WE AREN"T CREATING NESTING LIKE THIS??
+//network graph data acts like a nested data structure. Create new variables within the nested data. Use d3.set because it is like an ordinal scale. DO WE NEED TO DO THIS IF WE AREN"T CREATING NESTING LIKE THIS??
 
 var majorSpending = d3.set(data.map(function(d) { return d.MajorSpendingCategory; })).values();
-var budgetAccount = d3.set(data.map(function(d) { return d.Title; })).values();
-
-var agency = d3.set(data.map(function(d) { return d.Agency; })).values();
-var bureau = d3.set(data.map(function(d) { return d.Bureau; })).values();
-var function1 = d3.set(data.map(function(d) { return d.Func; })).values();
-var budgetEnforcement = d3.set(data.map(function(d) { return d.DiscMand; })).values();
 
 //There are 1788 rows of data
-console.log(budgetAccount);
+//console.log(budgetAccount);
 
 //There are 8 major spending categories
-console.log(majorSpending);
+//console.log(majorSpending);
 
 //There are 128 Agencies
-console.log(agency);
+//console.log(agency);
 
 //There are 343 Bureaus
-console.log(bureau);
+//console.log(bureau);
 
 //There are 3 options of budget enforcement categories: Disc, Mand, NI
-console.log(budgetEnforcement);
+//console.log(budgetEnforcement);
+
 
 //graph is just the type of chart that uses nodes and links. Figure out how to read the graph.nodes here
 var nodes = [],
@@ -219,7 +165,7 @@ var circles = svg.append("g")
       .call(d3.drag()
     .on("start", dragstarted)
     .on("drag", dragged)
-    .on("end", dragended))
+    .on("end", dragended));
 
 //.on("mouseenter", function(d) {
 //          console.log(d);
@@ -252,20 +198,20 @@ simulation
   }
 
 //This makes the drag work
-function dragstarted(d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-}
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-}
-function dragended(d) {
-  if (!d3.event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-}
+//function dragstarted(d) {
+//  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+//  d.fx = d.x;
+//  d.fy = d.y;
+//}
+//function dragged(d) {
+//  d.fx = d3.event.x;
+ // d.fy = d3.event.y;
+//}
+//function dragended(d) {
+//  if (!d3.event.active) simulation.alphaTarget(0);
+// d.fx = null;
+// d.fy = null;
+//}
 
 //End of data function
 });

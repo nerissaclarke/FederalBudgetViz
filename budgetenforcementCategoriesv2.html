@@ -27,9 +27,6 @@ font-family: 'Poppins', sans-serif;
 font-family: 'Catamaran', sans-serif;
 font-family: 'Heebo', sans-serif;
 */
-svg{
-	border: 5px solid black;
-}
 
 .links line {
   stroke: #000;
@@ -67,20 +64,13 @@ div.tooltip{
     font-family: 'heebo', sans-serif;
     font-size: 12px;
     color: white;
-    /*padding: 10px; */  
+    padding: 10px;   
     border: 1.5 px solid #37abff;
     background: #0067b1;        
     border-radius: 6px;            
     pointer-events: none;
     opacity: .9;   
 }
-
-div{
-    display: inline-block;
-    padding: 10px;
-}
-
-
 
 </style>
 
@@ -89,9 +79,7 @@ div{
 <h1> 2016 Federal Budget At a Glance </h1>
 
 </body>
-
-<svg width="800" height="750"></svg>
-
+<svg width="800" height="1000"></svg>
 <p> Source: Congressional Budget Office, March 2016 </p>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -113,17 +101,14 @@ var simulation = d3.forceSimulation()
 //color scales
 var color = d3.scaleOrdinal(d3.Category20c);
 
-var bCat = ["Mandatory", "Discretionary", "Interest"]
-var levels = ["DiscMand", "Agency", "Func"]
-
 var colorDiscMand = d3.scaleOrdinal() 
-    .domain(bCat)
-    .range(["#faa61a", "#8cc63f", "#be1e2d"]);
+    .domain(["Discretionary", "Mandatory", "Interest"])
+    .range(["#8cc63f","#faa61a", "#be1e2d"]);
 
 //Format Numbers to show up like $ 
 var formatDollars = d3.format("$,");
 
-//For text labels
+
 var div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
@@ -136,10 +121,10 @@ d3.csv("CBOBudgetDataByAccount.csv", function(error, data) {
 //This creates empty objects that can be used to create pairs later on
    var majorSpendingSumLookup = {}
    var discMandSumLookup = {}
-   
    var budgetEnforcementLookup = {} 
-   var accountLookup = {}
-   var majorSpendingLookup = {}
+
+    //var accountLookup = {}
+    //var majorSpendingLookup = {}
     
   
  data.forEach(function(d) {
@@ -148,15 +133,15 @@ d3.csv("CBOBudgetDataByAccount.csv", function(error, data) {
     d.DiscMandAgg = +d.DiscMandAgg; 
     d.MajSpendAgg = +d.MajSpendAgg;
    
-//Create data to go inside the empty Lookup Objects. Creates pairs for $ spent on each category
 
+
+   //Create data to go inside the empty Lookup Objects. Creates pairs for $ spent on each category
     majorSpendingSumLookup[d.MajorSpendingCategory] = +d.MajSpendAgg;
     discMandSumLookup[d.DiscMand]= +d.DiscMandAgg;
     budgetEnforcementLookup[d.Title]= d.DiscMand;
-  	budgetEnforcementLookup[d.MajorSpendingCategory]= d.DiscMand;
-
-  	//Gives you a way to look up what other categories each account is associated with"
+  //Gives you a way to look up what other categories each account is associated with"
     //accountLookup[d.Title] = +d.O2016;  
+    budgetEnforcementLookup[d.MajorSpendingCategory]= d.DiscMand;
     // majorSpendingLookup[d.Title] = d.MajorSpendingCategory;
  })
 
@@ -166,59 +151,7 @@ console.log(discMandSumLookup);
 //From largest to most discrete
 var budgetEnforcement = d3.set(data.map(function(d) { return d.DiscMand; })).values();
 var majorSpending = d3.set(data.map(function(d) { return d.MajorSpendingCategory; })).values();
-var agency = d3.set(data.map(function(d) { return d.Agency; })).values();
-var funct =  d3.set(data.map(function(d) { return d.Func; })).values();
-
 //var budgetAccount = d3.set(data.map(function(d) { return d.Title; })).values();
-
-//Create filter dropdown menus
-
-levels.forEach(function(column) {
-	var filter = d3.select("body").append("div")
-	.attr("id", "filter" + column)
-
-	var map = d3.set(data.map(function(d) { return d.column;})).values();
-		
-	var dropDown = d3.select("#filter" + levels)
-			.append("select")
-			.attr("name", "list")
-			.attr("class", "filter")
-			.selectAll("option")
-			.append("text")
-			.text(column +":")
-			.data( ["All"].concat(d3.set(data.map(function(d) { return d.levels; })).values()))
-       		.enter()
-       		//.data(.concat(d3.set(data.map
-        	.append("option");
-
-		dropDown.text(function (d) { return d; })
-       		.attr("value", function (d) { return d; });
-
-       	dropDown.on("change", function(d) {
-    		var selected = this.value;
-    		displayOthers = this.checked ? "inline" : "none";
-    		display = this.checked ? "none" : "inline";
-
-    		console.log(column);
-
-      //if(selected == 'All'){
-      //  svg.selectAll(".circles")
-      //      .attr("display", display);
-     // }
-     // else{
-     //   svg.selectAll(".circles")
-      //      .filter(function(d) {return selected != d.region;})
-     //       .attr("display", displayOthers);
-     //       
-     //   svg.selectAll(".circles")
-     //       .filter(function(d) {return selected == d.region;})
-     //       .attr("display", display);
-      })
-});
-
-
-
-//createDropDownMenus(levels);
 
 //network graph data acts like a nested data structure.Create new variables within the nested data. Use d3.set because it is like an ordinal scale.
 //var agency = d3.set(data.map(function(d) { return d.Agency; })).values();
@@ -282,7 +215,7 @@ console.log(graph);
       .on("start", dragstarted)
       .on("drag", dragged)
       .on("end", dragended))
-    //This creates the hover function. Assigns a class, and then styles the circles based on the class
+    //This creates the hover function. Assigns a class, and then styles the circls based on the class
       .on("mouseenter", function(d) {
         d3.selectAll("circle").style("fill-opacity", .4)
 
@@ -318,17 +251,6 @@ console.log(graph);
         .style("opacity", 0);
 
       } );
-
-//Add Click update chart functionality
-
-//node.on("change", updateChart)
-//	updateChart(majorspendingcategories)
-//	updateChart(add links to accounts)
-//})
-
-var updateChart = function(analysisLevel) {
-}
-
 
 //Text labels inside each circle
   var text = svg.append("g")
